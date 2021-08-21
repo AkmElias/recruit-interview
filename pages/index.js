@@ -69,21 +69,30 @@ const Snake = () => {
     { x: 7, y: 12 },
     { x: 6, y: 12 },
   ];
-
+  const getDefaultFood = () => [{ x: 4, y: 10 }];
   const grid = useRef();
 
   // snake[0] is head and snake[snake.length - 1] is tail
   const [snake, setSnake] = useState(getDefaultSnake());
   const [direction, setDirection] = useState(Direction.Right);
 
-  const [food, setFood] = useState({ x: 4, y: 10 });
+  const [foods, setFoods] = useState(getDefaultFood());
   const [score, setScore] = useState(0);
 
   const restart = () => {
     setSnake(getDefaultSnake());
-    setFood({ x: 4, y: 10 });
+    setFoods(getDefaultFood());
     setDirection(Direction.Right);
     setScore(0);
+  };
+
+  const dismissFood = (head) => {
+    console.log("disimiss ", head);
+    setFoods(
+      foods.filter((food) => {
+        return food.x != head.x && food.y != head.y;
+      })
+    );
   };
 
   // move the snake
@@ -92,14 +101,14 @@ const Snake = () => {
       setSnake((snake) => {
         const head = snake[0];
         const newHead = { x: head.x + direction.x, y: head.y + direction.y };
-
+        //reappearing snake
         if (newHead.x === -1) newHead.x = 24;
         if (newHead.x === 25) newHead.x = 0;
         if (newHead.y === -1) newHead.y = 24;
         if (newHead.y === 25) newHead.y = 0;
-
+        //restarting game
         if (isSnake(newHead)) {
-          console.log("dead");
+          console.log("dead!!");
           restart();
         }
         // make a new snake by extending head
@@ -117,7 +126,7 @@ const Snake = () => {
     const timer = setInterval(runSingleStep, 500);
 
     return () => clearInterval(timer);
-  }, [direction, food]);
+  }, [direction, foods]);
 
   // update score and snake size whenever head touches a food
   useEffect(() => {
@@ -127,12 +136,15 @@ const Snake = () => {
         return score + 1;
       });
 
-      let newFood = getRandomCell();
-      while (isSnake(newFood)) {
-        newFood = getRandomCell();
-      }
+      dismissFood(head);
 
-      setFood(newFood);
+      // let newFood = getRandomCell();
+      // while (isSnake(newFood)) {
+      //   newFood = getRandomCell();
+      // }
+
+      // setFoods(newFood);
+
       //change snake's size
       setSnake((snake) => {
         const head = snake[0];
@@ -145,6 +157,37 @@ const Snake = () => {
       });
     }
   }, [snake]);
+
+  //appear random food every 3 seconds
+  useEffect(() => {
+    const addFood = () => {
+      setFoods((foods) => {
+        let newFood = getRandomCell();
+        return [newFood, ...foods];
+      });
+    };
+
+    // appearFood();
+    const timer = setInterval(addFood, 3000);
+
+    return () => clearInterval(timer);
+  }, [foods]);
+
+  useEffect(() => {
+    const removeFood = () => {
+      console.log("foods", foods);
+      setFoods((foods) => {
+        let newFoods = [...foods];
+        newFoods.pop();
+        return newFoods;
+      });
+    };
+
+    // appearFood();
+    const timer = setInterval(removeFood, 10000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const handleNavigation = (event) => {
@@ -205,7 +248,9 @@ const Snake = () => {
 
   // ?. is called optional chaining
   // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
-  const isFood = ({ x, y }) => food?.x === x && food?.y === y;
+  // const isFood = ({ x, y }) => food?.x === x && food?.y === y;
+  const isFood = ({ x, y }) =>
+    foods.find((position) => position.x === x && position.y === y);
 
   const isSnake = ({ x, y }) =>
     snake.find((position) => position.x === x && position.y === y);
