@@ -69,6 +69,7 @@ const Snake = () => {
     { x: 7, y: 12 },
     { x: 6, y: 12 },
   ];
+
   const grid = useRef();
 
   // snake[0] is head and snake[snake.length - 1] is tail
@@ -78,6 +79,13 @@ const Snake = () => {
   const [food, setFood] = useState({ x: 4, y: 10 });
   const [score, setScore] = useState(0);
 
+  const restart = () => {
+    setSnake(getDefaultSnake());
+    setFood({ x: 4, y: 10 });
+    setDirection(Direction.Right);
+    setScore(0);
+  };
+
   // move the snake
   useEffect(() => {
     const runSingleStep = () => {
@@ -85,6 +93,15 @@ const Snake = () => {
         const head = snake[0];
         const newHead = { x: head.x + direction.x, y: head.y + direction.y };
 
+        if (newHead.x === -1) newHead.x = 24;
+        if (newHead.x === 25) newHead.x = 0;
+        if (newHead.y === -1) newHead.y = 24;
+        if (newHead.y === 25) newHead.y = 0;
+
+        if (isSnake(newHead)) {
+          console.log("dead");
+          restart();
+        }
         // make a new snake by extending head
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
         const newSnake = [newHead, ...snake];
