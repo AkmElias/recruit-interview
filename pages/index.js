@@ -102,7 +102,7 @@ const Snake = () => {
     return () => clearInterval(timer);
   }, [direction, food]);
 
-  // update score whenever head touches a food
+  // update score and snake size whenever head touches a food
   useEffect(() => {
     const head = snake[0];
     if (isFood(head)) {
@@ -116,6 +116,16 @@ const Snake = () => {
       }
 
       setFood(newFood);
+      //change snake's size
+      setSnake((snake) => {
+        const head = snake[0];
+        const newHead = { x: head.x + direction.x, y: head.y + direction.y };
+
+        // make a new snake by extending head
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+        const newSnake = [newHead, ...snake];
+        return newSnake;
+      });
     }
   }, [snake]);
 
@@ -123,19 +133,51 @@ const Snake = () => {
     const handleNavigation = (event) => {
       switch (event.key) {
         case "ArrowUp":
-          setDirection(Direction.Top);
+          setDirection((direction) => {
+            if (
+              direction.x === Direction.Bottom.x &&
+              direction.y === Direction.Bottom.y
+            )
+              return direction;
+            return Direction.Top;
+          });
+
           break;
 
         case "ArrowDown":
-          setDirection(Direction.Bottom);
+          setDirection((direction) => {
+            if (
+              direction.x === Direction.Top.x &&
+              direction.y === Direction.Top.y
+            )
+              return direction;
+            return Direction.Bottom;
+          });
+
           break;
 
         case "ArrowLeft":
-          setDirection(Direction.Left);
+          setDirection((direction) => {
+            if (
+              direction.x === Direction.Right.x &&
+              direction.y === Direction.Right.y
+            )
+              return direction;
+            return Direction.Left;
+          });
+
           break;
 
         case "ArrowRight":
-          setDirection(Direction.Right);
+          setDirection((direction) => {
+            if (
+              direction.x === Direction.Left.x &&
+              direction.y === Direction.Left.y
+            )
+              return direction;
+            return Direction.Right;
+          });
+
           break;
       }
     };
