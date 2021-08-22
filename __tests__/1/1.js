@@ -176,7 +176,7 @@ const exercise32a = (person) => {
       total += -1;
     }
     return total;
-  },0);
+  }, 0);
   return difference;
 };
 
@@ -194,7 +194,7 @@ test("Exercise 3.2a: given a person, return difference between female and male s
 // implement map function
 const map = (array, func) => {
   let mpArray = [];
-  for(let i = 0; i<array.length; i++){
+  for (let i = 0; i < array.length; i++) {
     let val = func(array[i]);
     mpArray.push(val);
   }
@@ -210,7 +210,16 @@ test("Exercise 4.1: implement map function", () => {
 });
 
 // implement filter function
-const filter = (array, func) => {};
+const filter = (array, func) => {
+  let filteredArray = [];
+  for (let i = 0; i < array.length; i++) {
+    let val = func(array[i]);
+    if (val === true) {
+      filteredArray.push(array[i]);
+    }
+  }
+  return filteredArray;
+};
 
 test("Exercise 4.2: implement filter function", () => {
   const f1 = [
