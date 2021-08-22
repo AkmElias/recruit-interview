@@ -24,7 +24,11 @@ test("Example 1: return names of all subordinates of person", () => {
 });
 
 // return company name from email address
-const exercise11 = (email) => {};
+const exercise11 = (email) => {
+  let split1 = email.split("@");
+  let split2 = split1[1].split(".");
+  return split2[0];
+};
 
 test("Exercise 1.1: return company name from email address", () => {
   expect(exercise11("katherinecohen@ecraze.com")).toEqual("ecraze");
@@ -32,7 +36,15 @@ test("Exercise 1.1: return company name from email address", () => {
 });
 
 // given a person, return list of companies of her subordinates
-const exercise12 = (person) => {};
+const exercise12 = (person) => {
+  let comapnyList = person.subordinates.map((subordinate) => {
+    let split1 = subordinate.email.split("@");
+    let split2 = split1[1].split(".");
+    return split2[0];
+  });
+  console.log(comapnyList);
+  return comapnyList;
+};
 
 test("Exercise 1.2: given a person, return list of companies of her subordinates", () => {
   expect(exercise12(CruzHarrell)).toEqual([
