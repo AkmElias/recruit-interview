@@ -127,7 +127,13 @@ test("Example 3: given a person, return total balance of her subordinates", () =
 });
 
 // given a person, return average age of her subordinates
-const exercise31 = (person) => {};
+const exercise31 = (person) => {
+  let totalAge = person.subordinates.reduce(
+    (total, subordinate) => subordinate.age + total,
+    0
+  );
+  return totalAge / person.subordinates.length;
+};
 
 test("Exercise 3.1: given a person, return average age of her subordinates", () => {
   expect(exercise31(CruzHarrell)).toBeCloseTo(50.2);
@@ -136,7 +142,17 @@ test("Exercise 3.1: given a person, return average age of her subordinates", () 
 
 // given a person, return difference between female and male subordinates
 // e.g: if someone has 4 female subordinates and 7 male subordinates, return -3(=4-7)
-const exercise32 = (person) => {};
+const exercise32 = (person) => {
+  let female = 0;
+  let male = 0;
+  person.subordinates.map((subordinate) => {
+    if (subordinate.gender === "female") female += 1;
+  });
+  person.subordinates.map((subordinate) => {
+    if (subordinate.gender === "male") male += 1;
+  });
+  return female - male;
+};
 
 test("Exercise 3.2: given a person, return difference between female and male subordinates", () => {
   expect(exercise32(CruzHarrell)).toEqual(2);
