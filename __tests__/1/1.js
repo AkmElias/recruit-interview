@@ -42,7 +42,6 @@ const exercise12 = (person) => {
     let split2 = split1[1].split(".");
     return split2[0];
   });
-  console.log(comapnyList);
   return comapnyList;
 };
 
@@ -75,7 +74,11 @@ test("Example 2: given a person and gender, return number of subordinates of per
 });
 
 // given a person and [minAge, maxAge], return number of subordinates in that age range
-const exercise21 = (person, [minAge, maxAge]) => {};
+const exercise21 = (person, [minAge, maxAge]) => {
+  return person.subordinates.filter(
+    (subordinate) => subordinate.age >= minAge && subordinate.age <= maxAge
+  ).length;
+};
 
 test("Exercise 2.1: given a person and [minAge, maxAge], return number of subordinates in that age range", () => {
   expect(exercise21(CruzHarrell, [21, 49])).toEqual(5);
