@@ -242,7 +242,6 @@ const reduce = (array, func, initalValue) => {
   for (let i = 0; i < array.length; i++) {
     total = func(total, array[i]);
   }
-  console.log(total)
   return total;
 };
 
@@ -279,7 +278,41 @@ test("Example 5: return total number of people in the dataset", () => {
 });
 
 // given a color, return number of people who have that eye color
-const exercise51 = (color) => {};
+const exercise51 = (color) => {
+  let count = 0;
+  const getTotalPeople = (person) => {
+    for (let i = 0; i < person.subordinates.length; i++) {
+      if (person.subordinates[i].eyeColor === color) {
+        count += 1;
+        getTotalPeople(person.subordinates[i]);
+      } else {
+        getTotalPeople(person.subordinates[i]);
+      }
+    }
+  };
+  getTotalPeople(CruzHarrell);
+  return count;
+  // const getTotalPeople = (person) => {
+  //   person.subordinates.filter(subordinate => {
+  //      if(subordinate.eyeColor === color){
+  //       return 1 + getTotalPeople(subordinate)
+  //      } else {
+  //        return getTotalPeople(subordinate)
+  //      }
+  //    })
+  //    .reduce((total,employees) => total + employees, 0)
+  // };
+  // console.log("total",getTotalPeople(CruzHarrell));
+  // console.log("count ", count)
+  // const getTotalPeople = (person) => {
+  //   return person.subordinates.filter((subordinate) => {
+  //     if (subordinate.eyeColor === color) {
+  //       return getTotalPeople(subordinate);
+  //     } else return getTotalPeople(subordinate);
+  //   });
+  // };
+  // return getTotalPeople(CruzHarrell).length + 1;
+};
 
 test("Exercise 5.1: given a color, return number of people who have that eye color", () => {
   expect(exercise51("green")).toEqual(11);
@@ -309,7 +342,24 @@ test("Exercise 5.2: given maxDistance, return number of employees who lives with
 
 // return first name (not full name) of all person who has the same company as their manager
 // hint: exercise11
-const exercise53 = () => {};
+const exercise53 = () => {
+  // const getnames = (person) => {
+  //   let split1,split2,nameSplit;
+  //   split1 = person.email.split("@");
+  //   split2 = split1[1].split(".");
+  //   let bossCompany = split2[0];
+  //   person.subordinates.map((subordinate) => {
+  //     split1 = subordinate.email.split("@");
+  //     split2 = split1[1].split(".");
+  //     let company = split2[0];
+  //     if(company === bossCompany) {
+  //       nameSplit = subordinate.name.split(' ');
+  //       return nameSplit[0];
+  //     }
+  //   });
+  // };
+  // getnames(CruzHarrell);
+};
 
 test("Exercise 5.3: return first name (not full name) of all person who has the same company as their manager", () => {
   expect(exercise53()).toEqual(["Suzanne", "Gregory", "Buchanan"]);
