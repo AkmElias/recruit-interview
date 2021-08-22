@@ -143,14 +143,22 @@ test("Exercise 3.1: given a person, return average age of her subordinates", () 
 // given a person, return difference between female and male subordinates
 // e.g: if someone has 4 female subordinates and 7 male subordinates, return -3(=4-7)
 const exercise32 = (person) => {
-  let female = 0;
-  let male = 0;
-  person.subordinates.map((subordinate) => {
-    if (subordinate.gender === "female") female += 1;
-  });
-  person.subordinates.map((subordinate) => {
-    if (subordinate.gender === "male") male += 1;
-  });
+  let female = 0,
+    male = 0;
+  female = person.subordinates.reduce((total, subordinate) => {
+    if (subordinate.gender === "female") {
+      total = total + 1;
+    }
+    return total;
+  }, 0);
+
+  male = person.subordinates.reduce((total, subordinate) => {
+    if (subordinate.gender === "male") {
+      total = total + 1;
+    }
+    return total;
+  }, 0);
+
   return female - male;
 };
 
@@ -160,7 +168,17 @@ test("Exercise 3.2: given a person, return difference between female and male su
 });
 
 // do the same exercise32, but with using only 1 reduce function and nothing else
-const exercise32a = (person) => {};
+const exercise32a = (person) => {
+  let difference = person.subordinates.reduce((total, subordinate) => {
+    if (subordinate.gender === "female") {
+      total += 1;
+    } else if (subordinate.gender === "male") {
+      total += -1;
+    }
+    return total;
+  },0);
+  return difference;
+};
 
 test("Exercise 3.2a: given a person, return difference between female and male subordinates", () => {
   expect(exercise32a(CruzHarrell)).toEqual(2);
