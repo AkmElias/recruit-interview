@@ -333,7 +333,23 @@ test("distance: given two locations, return the distance between them", () => {
 });
 
 // given maxDistance, return number of employees who lives within maxDistance distance of their managers
-const exercise52 = (maxDistance) => {};
+const exercise52 = (maxDistance) => {
+  let count = 0;
+  const getTotalPeople = (person) => {
+    person.subordinates.map((subordinate) => {
+      let distance = Math.sqrt(
+        (person.location.longitude - subordinate.location.longitude) *
+          (person.location.longitude - subordinate.location.longitude) +
+          (person.location.latitude - subordinate.location.latitude) *
+            (person.location.latitude - subordinate.location.latitude)
+      );
+      if (distance <= maxDistance) count += 1;
+      getTotalPeople(subordinate);
+    });
+  };
+  getTotalPeople(CruzHarrell);
+  return count;
+};
 
 test("Exercise 5.2: given maxDistance, return number of employees who lives within maxDistance distance of their managers", () => {
   expect(exercise52(5)).toEqual(25);
