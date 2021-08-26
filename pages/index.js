@@ -79,6 +79,7 @@ const Snake = () => {
   const [foods, setFoods] = useState(getDefaultFood());
   const [score, setScore] = useState(0);
 
+  //restart the game
   const restart = () => {
     setSnake(getDefaultSnake());
     setFoods(getDefaultFood());
@@ -86,8 +87,8 @@ const Snake = () => {
     setScore(0);
   };
 
+  //remove the eaten food
   const dismissFood = (head) => {
-    console.log("disimiss ", head);
     setFoods(
       foods.filter((food) => {
         return food.x != head.x && food.y != head.y;
@@ -175,7 +176,6 @@ const Snake = () => {
 
   useEffect(() => {
     const removeFood = () => {
-      console.log("foods", foods);
       setFoods((foods) => {
         let newFoods = [...foods];
         newFoods.pop();
@@ -183,7 +183,7 @@ const Snake = () => {
       });
     };
 
-    // appearFood();
+    // removeFood();
     const timer = setInterval(removeFood, 10000);
 
     return () => clearInterval(timer);

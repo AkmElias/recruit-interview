@@ -25,9 +25,7 @@ test("Example 1: return names of all subordinates of person", () => {
 
 // return company name from email address
 const exercise11 = (email) => {
-  let split1 = email.split("@");
-  let split2 = split1[1].split(".");
-  return split2[0];
+  return email.split("@")[1].split(".")[0];
 };
 
 test("Exercise 1.1: return company name from email address", () => {
@@ -38,9 +36,7 @@ test("Exercise 1.1: return company name from email address", () => {
 // given a person, return list of companies of her subordinates
 const exercise12 = (person) => {
   let comapnyList = person.subordinates.map((subordinate) => {
-    let split1 = subordinate.email.split("@");
-    let split2 = split1[1].split(".");
-    return split2[0];
+    return subordinate.email.split("@")[1].split(".")[0];
   });
   return comapnyList;
 };
@@ -87,16 +83,15 @@ test("Exercise 2.1: given a person and [minAge, maxAge], return number of subord
 
 // given a person, return the names of subordinates who themselves have subordinates
 const exercise22 = (person) => {
-  let names = [];
-  let i = 0;
+  let subordinateNames = [];
+  let index = 0;
   person.subordinates.map((subordinate) => {
     if (subordinate.subordinates.length >= 1) {
-      names[i] = subordinate.name;
-      i++;
+      subordinateNames[index++] = subordinate.name;
     }
   });
 
-  return names;
+  return subordinateNames;
 };
 
 test("Exercise 2.2: given a person, return the names of subordinates who themselves have subordinates", () => {
@@ -128,11 +123,11 @@ test("Example 3: given a person, return total balance of her subordinates", () =
 
 // given a person, return average age of her subordinates
 const exercise31 = (person) => {
-  let totalAge = person.subordinates.reduce(
+  let totalAgeOfSubordinates = person.subordinates.reduce(
     (total, subordinate) => subordinate.age + total,
     0
   );
-  return totalAge / person.subordinates.length;
+  return totalAgeOfSubordinates / person.subordinates.length;
 };
 
 test("Exercise 3.1: given a person, return average age of her subordinates", () => {
@@ -143,23 +138,27 @@ test("Exercise 3.1: given a person, return average age of her subordinates", () 
 // given a person, return difference between female and male subordinates
 // e.g: if someone has 4 female subordinates and 7 male subordinates, return -3(=4-7)
 const exercise32 = (person) => {
-  let female = 0,
-    male = 0;
-  female = person.subordinates.reduce((total, subordinate) => {
-    if (subordinate.gender === "female") {
-      total = total + 1;
-    }
-    return total;
-  }, 0);
+  const femaleSubordinates = person.subordinates.reduce(
+    (totalFemale, subordinate) => {
+      if (subordinate.gender === "female") {
+        totalFemale += 1;
+      }
+      return totalFemale;
+    },
+    0
+  );
 
-  male = person.subordinates.reduce((total, subordinate) => {
-    if (subordinate.gender === "male") {
-      total = total + 1;
-    }
-    return total;
-  }, 0);
+  const maleSubordinates = person.subordinates.reduce(
+    (totalMale, subordinate) => {
+      if (subordinate.gender === "male") {
+        totalMale += 1;
+      }
+      return totalMale;
+    },
+    0
+  );
 
-  return female - male;
+  return femaleSubordinates - maleSubordinates;
 };
 
 test("Exercise 3.2: given a person, return difference between female and male subordinates", () => {
@@ -169,15 +168,18 @@ test("Exercise 3.2: given a person, return difference between female and male su
 
 // do the same exercise32, but with using only 1 reduce function and nothing else
 const exercise32a = (person) => {
-  let difference = person.subordinates.reduce((total, subordinate) => {
-    if (subordinate.gender === "female") {
-      total += 1;
-    } else if (subordinate.gender === "male") {
-      total += -1;
-    }
-    return total;
-  }, 0);
-  return difference;
+  const differenceBetweenGender = person.subordinates.reduce(
+    (totalDifference, subordinate) => {
+      if (subordinate.gender === "female") {
+        totalDifference += 1;
+      } else if (subordinate.gender === "male") {
+        totalDifference += -1;
+      }
+      return totalDifference;
+    },
+    0
+  );
+  return differenceBetweenGender;
 };
 
 test("Exercise 3.2a: given a person, return difference between female and male subordinates", () => {
@@ -279,39 +281,22 @@ test("Example 5: return total number of people in the dataset", () => {
 
 // given a color, return number of people who have that eye color
 const exercise51 = (color) => {
-  let count = 0;
-  const getTotalPeople = (person) => {
+  let totalPeopleWithSameEyeColor = 0;
+  const getTotalPeopleWithSameEyeColor = (person) => {
     for (let i = 0; i < person.subordinates.length; i++) {
       if (person.subordinates[i].eyeColor === color) {
-        count += 1;
-        getTotalPeople(person.subordinates[i]);
+        //countOnlyWhen eye color match
+        totalPeopleWithSameEyeColor += 1;
+        //resusively call same function with subordinates parameter after counting
+        getTotalPeopleWithSameEyeColor(person.subordinates[i]);
       } else {
-        getTotalPeople(person.subordinates[i]);
+        //resusively call same function with subordinates parameter without counting
+        getTotalPeopleWithSameEyeColor(person.subordinates[i]);
       }
     }
   };
-  getTotalPeople(CruzHarrell);
-  return count;
-  // const getTotalPeople = (person) => {
-  //   person.subordinates.filter(subordinate => {
-  //      if(subordinate.eyeColor === color){
-  //       return 1 + getTotalPeople(subordinate)
-  //      } else {
-  //        return getTotalPeople(subordinate)
-  //      }
-  //    })
-  //    .reduce((total,employees) => total + employees, 0)
-  // };
-  // console.log("total",getTotalPeople(CruzHarrell));
-  // console.log("count ", count)
-  // const getTotalPeople = (person) => {
-  //   return person.subordinates.filter((subordinate) => {
-  //     if (subordinate.eyeColor === color) {
-  //       return getTotalPeople(subordinate);
-  //     } else return getTotalPeople(subordinate);
-  //   });
-  // };
-  // return getTotalPeople(CruzHarrell).length + 1;
+  getTotalPeopleWithSameEyeColor(CruzHarrell);
+  return totalPeopleWithSameEyeColor;
 };
 
 test("Exercise 5.1: given a color, return number of people who have that eye color", () => {
@@ -334,8 +319,8 @@ test("distance: given two locations, return the distance between them", () => {
 
 // given maxDistance, return number of employees who lives within maxDistance distance of their managers
 const exercise52 = (maxDistance) => {
-  let count = 0;
-  const getTotalPeople = (person) => {
+  let totalEmployessWithinMaxDistance = 0;
+  const getTotalEmployessWithinMaxDIstance = (person) => {
     person.subordinates.map((subordinate) => {
       let distance = Math.sqrt(
         (person.location.longitude - subordinate.location.longitude) *
@@ -343,12 +328,14 @@ const exercise52 = (maxDistance) => {
           (person.location.latitude - subordinate.location.latitude) *
             (person.location.latitude - subordinate.location.latitude)
       );
-      if (distance <= maxDistance) count += 1;
-      getTotalPeople(subordinate);
+      //count when an employee found within the given maxDistance
+      if (distance <= maxDistance) totalEmployessWithinMaxDistance += 1;
+      //recursively count total emplopyee
+      getTotalEmployessWithinMaxDIstance(subordinate);
     });
   };
-  getTotalPeople(CruzHarrell);
-  return count;
+  getTotalEmployessWithinMaxDIstance(CruzHarrell);
+  return totalEmployessWithinMaxDistance;
 };
 
 test("Exercise 5.2: given maxDistance, return number of employees who lives within maxDistance distance of their managers", () => {
@@ -359,28 +346,24 @@ test("Exercise 5.2: given maxDistance, return number of employees who lives with
 // return first name (not full name) of all person who has the same company as their manager
 // hint: exercise11
 const exercise53 = () => {
-  let names = [];
-  let split1, split2,nameSplit, i = 0;
-
-  const getNames = (person) => {
-    split1 = person.email.split("@");
-    split2 = split1[1].split(".");
-    let bossCompany = split2[0];
+  let firstNames = [];
+  let firstName = "";
+  let index = 0;
+  const getFirstNames = (person) => {
+    let bossCompany = person.email.split("@")[1].split(".")[0];
     person.subordinates.map((subordinate) => {
-      split1 = subordinate.email.split("@");
-      split2 = split1[1].split(".");
-      let company = split2[0];
-      if (company === bossCompany) {
-        nameSplit = subordinate.name.split(" ");
-        names[i] = nameSplit[0];
-        i++;
+      let subordinateCompany = subordinate.email.split("@")[1].split(".")[0];
+      if (subordinateCompany === bossCompany) {
+        firstName = subordinate.name.split(" ")[0];
+        firstNames[index++] = firstName;
       }
-      getNames(subordinate);
+      //recursively getting firstNames
+      getFirstNames(subordinate);
     });
   };
 
-  getNames(CruzHarrell);
-  return names;
+  getFirstNames(CruzHarrell);
+  return firstNames;
 };
 
 test("Exercise 5.3: return first name (not full name) of all person who has the same company as their manager", () => {
