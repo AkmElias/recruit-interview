@@ -61,6 +61,8 @@ const Cell = ({ x, y, type }) => {
 const getRandomCell = () => ({
   x: Math.floor(Math.random() * Config.width),
   y: Math.floor(Math.random() * Config.width),
+  //disappear after 10 seonds 
+  timeToDisappear: new Date().getTime() + 10000,
 });
 
 const Snake = () => {
@@ -69,7 +71,9 @@ const Snake = () => {
     { x: 7, y: 12 },
     { x: 6, y: 12 },
   ];
-  const getDefaultFood = () => [{ x: 4, y: 10 }];
+  const getDefaultFood = () => [
+    { x: 4, y: 10, timeToDisappear: new Date().getTime() + 10000 },
+  ];
   const grid = useRef();
 
   // snake[0] is head and snake[snake.length - 1] is tail
@@ -80,7 +84,7 @@ const Snake = () => {
   const [score, setScore] = useState(0);
 
   //restart the game
-  const restart = () => {
+  const restartGame = () => {
     setSnake(getDefaultSnake());
     setFoods(getDefaultFood());
     setDirection(Direction.Right);
@@ -88,8 +92,8 @@ const Snake = () => {
   };
 
   //remove the eaten food
-  const dismissFood = (head) => {
-    setFoods(
+  const removeEatenFood = (head) => {
+    setFoods((foods) =>
       foods.filter((food) => {
         return food.x != head.x && food.y != head.y;
       })
@@ -109,8 +113,7 @@ const Snake = () => {
         if (newHead.y === 25) newHead.y = 0;
         //restarting game
         if (isSnake(newHead)) {
-          console.log("dead!!");
-          restart();
+          restartGame();
         }
         // make a new snake by extending head
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
@@ -137,14 +140,7 @@ const Snake = () => {
         return score + 1;
       });
 
-      dismissFood(head);
-
-      // let newFood = getRandomCell();
-      // while (isSnake(newFood)) {
-      //   newFood = getRandomCell();
-      // }
-
-      // setFoods(newFood);
+      removeEatenFood(head);
 
       //change snake's size
       setSnake((snake) => {
@@ -159,36 +155,37 @@ const Snake = () => {
     }
   }, [snake]);
 
-  //appear random food every 3 seconds
+  //appear a food randomly every 3 seconds
   useEffect(() => {
-    const addFood = () => {
+    let newFood;
+    const appearFood = () => {
       setFoods((foods) => {
-        let newFood = getRandomCell();
+        newFood = getRandomCell();
         return [newFood, ...foods];
       });
     };
 
     // appearFood();
-    const timer = setInterval(addFood, 3000);
+    const timer = setInterval(appearFood, 3000);
 
     return () => clearInterval(timer);
-  }, [foods]);
+  }, []);
 
+  //disappearFood evry 10 seconds
+  // desired solution is to disappear every food exactly after 10 seconds since created..
   useEffect(() => {
-    const removeFood = () => {
+    const disappearFood = () => {
       setFoods((foods) => {
         let newFoods = [...foods];
         newFoods.pop();
         return newFoods;
       });
     };
-
-    // removeFood();
-    const timer = setInterval(removeFood, 10000);
-
+    const timer = setInterval(disappearFood, 10000);
     return () => clearInterval(timer);
   }, []);
 
+  //handleNavigation
   useEffect(() => {
     const handleNavigation = (event) => {
       switch (event.key) {
