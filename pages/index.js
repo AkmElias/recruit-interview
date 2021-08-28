@@ -58,11 +58,10 @@ const Cell = ({ x, y, type }) => {
   );
 };
 
-const getRandomCell = () => ({
+const getFoodInRandomCell = () => ({
   x: Math.floor(Math.random() * Config.width),
   y: Math.floor(Math.random() * Config.width),
-  //disappear after 10 seonds 
-  timeToDisappear: new Date().getTime() + 10000,
+  expireTime: new Date().getTime() + 10000,
 });
 
 const Snake = () => {
@@ -72,7 +71,7 @@ const Snake = () => {
     { x: 6, y: 12 },
   ];
   const getDefaultFood = () => [
-    { x: 4, y: 10, timeToDisappear: new Date().getTime() + 10000 },
+    { x: 4, y: 10, expireTime: new Date().getTime() + 10000 },
   ];
   const grid = useRef();
 
@@ -92,12 +91,11 @@ const Snake = () => {
   };
 
   //remove the eaten food
-  const removeEatenFood = (head) => {
-    setFoods((foods) =>
-      foods.filter((food) => {
-        return food.x != head.x && food.y != head.y;
-      })
+  const eraseFood = (food) => {
+    let newFoods = foods.filter(
+      (position) => position.x != food.x || position.y != food.y
     );
+    setFoods(newFoods);
   };
 
   // move the snake
@@ -140,7 +138,7 @@ const Snake = () => {
         return score + 1;
       });
 
-      removeEatenFood(head);
+      eraseFood(head);
 
       //change snake's size
       setSnake((snake) => {
@@ -155,37 +153,43 @@ const Snake = () => {
     }
   }, [snake]);
 
-  //appear a food randomly every 3 seconds
+  //appear random food every 3 seconds
   useEffect(() => {
-    let newFood;
     const appearFood = () => {
+      // console.log(foods)
       setFoods((foods) => {
-        newFood = getRandomCell();
-        return [newFood, ...foods];
+        let newFood = getRandomCell();
+        while (isSnake(newFood)) {
+          newFood = getRandomCell();
+        }
+        let newFoods = [newFood, ...foods];
+        return newFoods;
       });
     };
 
     // appearFood();
     const timer = setInterval(appearFood, 3000);
-
     return () => clearInterval(timer);
-  }, []);
+  }, [foods]);
 
-  //disappearFood evry 10 seconds
-  // desired solution is to disappear every food exactly after 10 seconds since created..
+  //disappearing expired food
   useEffect(() => {
     const disappearFood = () => {
+      let currentTime = new Date().getTime();
       setFoods((foods) => {
-        let newFoods = [...foods];
-        newFoods.pop();
-        return newFoods;
+        foods.filter((food) => {
+          return food.expireTime > currentTime;
+        });
       });
+      // console.log(foods)
     };
-    const timer = setInterval(disappearFood, 10000);
+
+    // removeFood();
+    const timer = setInterval(disappearFood, 100);
+
     return () => clearInterval(timer);
   }, []);
 
-  //handleNavigation
   useEffect(() => {
     const handleNavigation = (event) => {
       switch (event.key) {
