@@ -158,9 +158,9 @@ const Snake = () => {
     const appearFood = () => {
       // console.log(foods)
       setFoods((foods) => {
-        let newFood = getRandomCell();
+        let newFood = getFoodInRandomCell();
         while (isSnake(newFood)) {
-          newFood = getRandomCell();
+          newFood = getFoodInRandomCell();
         }
         let newFoods = [newFood, ...foods];
         return newFoods;
