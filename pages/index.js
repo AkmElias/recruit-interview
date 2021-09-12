@@ -93,7 +93,7 @@ const Snake = () => {
   //remove the eaten food
   const eraseFood = (food) => {
     let newFoods = foods.filter(
-      (position) => position.x != food.x || position.y != food.y
+      (position) => position.x !== food.x || position.y !== food.y
     );
     setFoods(newFoods);
   };
@@ -128,7 +128,7 @@ const Snake = () => {
     const timer = setInterval(runSingleStep, 500);
 
     return () => clearInterval(timer);
-  }, [direction, foods]);
+  }, [direction]);
 
   // update score and snake size whenever head touches a food
   useEffect(() => {
@@ -170,18 +170,19 @@ const Snake = () => {
     // appearFood();
     const timer = setInterval(appearFood, 3000);
     return () => clearInterval(timer);
-  }, [foods]);
+  }, []);
 
   //disappearing expired food
   useEffect(() => {
     const disappearFood = () => {
       let currentTime = new Date().getTime();
+      let newFoods;
       setFoods((foods) => {
-        foods.filter((food) => {
-          return food.expireTime > currentTime;
-        });
+        newFoods = foods.filter(food => food.expireTime > currentTime);
+        console.log(newFoods)
+        return newFoods;
       });
-      // console.log(foods)
+     
     };
 
     // removeFood();
